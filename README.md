@@ -4,6 +4,13 @@ Repo for the implementation of a Multi-Aircraft Collision Avoidance project in M
 
 In this project, we are designing and implementing a deterministic controller in MATLAB that prevents collisions between multiple aircrafts. We consider $N$ aircrafts whose goal is going from a starting to a destination position in the grid. Our goal is to design a deterministic synchronous reactive component Controller that, when composed with the models of the aircrafts, the resulting model is invariant with respect to the AircraftSafety property, which states that all the aircrafts, except at the starting and destination positions must be at least two cells away from each other. 
 
+![Aircraft Model](https://github.com/joycehorn/MultiAircraftCollisionAvoidance/assets/4115729/b988098f-043c-413d-952b-52b88c0f548b)
+
+![Controller Model](https://github.com/joycehorn/MultiAircraftCollisionAvoidance/assets/4115729/55469ff4-b633-4fb0-b60c-2de749feef66)
+
+
+
+
 Here's a breakdown of the key components and requirements:
 
 **Aircraft Model:**
