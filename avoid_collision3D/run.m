@@ -1,4 +1,5 @@
 function [  ] = run(source, target)
+%source and target are N x 3 matrices for initial and final (x,y,z) positions of N aircrafts
 assert(size(source,2)==3,'Dimension of sources has to be 3')
 assert(size(target,2)==3,'Dimension of targets has to be 3')
 N=size(source,1);
@@ -8,6 +9,7 @@ assert(all(target(:,3)==0),'All targets have to be on the ground (z=0)')
 
 pos=source;
 pos_hist = {pos};
+
 while any(pos ~= target,"all")
     for aircraft=1:N
         if any(pos(aircraft,:)~=target(aircraft,:))
