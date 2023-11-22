@@ -15,16 +15,16 @@ pos_hist = {pos};
 
 % Simulation loop: run until all aircrafts have reached their targets
 while any(pos ~= target, 'all')
-    for aircraft = 1:N % N = number of instantiated aircrafts
-        if any(pos(aircraft, :) ~= target(aircraft, :)) %if current position is not the final destination
-            [new_pos, ~] = aircraft_model(pos(aircraft, :), target(aircraft, :), false); % call model for new position
+    for aircraft = 1:N
+        if any(pos(aircraft, :) ~= target(aircraft, :))
+            [new_pos, ~] = aircraft_model(pos(aircraft, :), target(aircraft, :), false);
             pos(aircraft, :) = new_pos;
         end
     end
     pos_hist = [pos_hist, pos];
 end
 
-% Visualization (keep history of positions to draw trace for each aircraft)
+% Plotting trajectories
 pos_hist = cat(3, pos_hist{:});
 pause(2)
 colors = rand(N, 3);
@@ -60,15 +60,10 @@ for i = 1:length(pos_hist)
     xlabel('X-axis');
     ylabel('Y-axis');
     zlabel('Z-axis');
-    grid on; % Add grid lines to the plot
+    grid on;
     legend('AutoUpdate', 'off', 'Location', 'Best');
-    pause(.5)
+    
+    % Add grid lines to the plot
+    pause(0.5)
     hold off;
 end
-
-%run([0, 0, 0; 1, 1, 0; 2, 2, 0], [5, 5, 0; 7, 7, 0; 10, 10, 0]);
-%run([0, 0, 0; 2, 2, 0; 4, 4, 0], [10, 10, 0; 8, 8, 0; 6, 6, 0]);
-%run([1, 1, 0; 2, 2, 0; 3, 3, 0], [5, 5, 0; 5, 5, 0; 5, 5, 0]);
-%run([0, 0, 0; 0, 0, 0; 0, 0, 0], [10, 10, 0; 5, 5, 0; 2, 2, 0]);%collide
-%run([2, 2, 0; 3, 3, 0; 5, 5, 0], [8, 8, 0; 7, 7, 0; 2, 2, 0]);
-
