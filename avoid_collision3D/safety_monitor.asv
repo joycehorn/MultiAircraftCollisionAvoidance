@@ -1,0 +1,13 @@
+function [safety] = safety_monitor(pos)
+%SAFATY_MONITOR Summary of this function goes here
+%   Detailed explanation goes here
+N=size(pos, 1);
+for i=1:N
+    for j=1:N
+        distance = sum(abs(pos(i,:) - pos(j,:)));
+        if distance>1
+            break
+        end
+    end
+end 
+

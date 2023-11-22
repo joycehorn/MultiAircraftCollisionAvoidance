@@ -14,12 +14,18 @@ pos = source;
 pos_hist = {pos};
 
 % Simulation loop: run until all aircrafts have reached their targets
+clock_cicle=0;
 while any(pos ~= target, 'all')
     for aircraft = 1:N % N = number of instantiated aircrafts
         if any(pos(aircraft, :) ~= target(aircraft, :)) %if current position is not the final destination
             [new_pos, ~] = aircraft_model(pos(aircraft, :), target(aircraft, :), false); % call model for new position
             pos(aircraft, :) = new_pos;
         end
+    end
+    clock_cicle=clock_cicle+1;
+    disp(clock_cicle)
+    if ~safety_monitor(pos)
+        disp('Not safe')
     end
     pos_hist = [pos_hist, pos];
 end
