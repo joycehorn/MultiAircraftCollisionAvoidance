@@ -23,9 +23,8 @@ while any(pos ~= target, 'all')
         end
     end
     clock_cicle=clock_cicle+1;
-    disp(clock_cicle)
     if ~safety_monitor(pos)
-        disp('Not safe')
+        disp(['Not safe at clock = ' num2str(clock_cicle)])
     end
     pos_hist = [pos_hist, pos];
 end
