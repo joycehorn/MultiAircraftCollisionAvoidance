@@ -25,6 +25,7 @@ while any(pos ~= target, 'all')
     clock_cicle=clock_cicle+1;
     if ~safety_monitor(pos)
         disp(['Not safe at clock = ' num2str(clock_cicle)])
+        disp(['Collision positions are are = [' num2str(pos(:).') ']']) ;
     end
     pos_hist = [pos_hist, pos];
 end
