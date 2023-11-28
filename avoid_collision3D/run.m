@@ -13,6 +13,11 @@ assert(all(target(:, 3) == 0), 'All targets have to be on the ground (z=0)');
 pos = source;
 pos_hist = {pos};
 
+% Calculate minimum and maximum values for x, y, and z for display
+all_points = [source; target];
+min_values = min(all_points);
+max_values = max(all_points);
+
 % Simulation loop: run until all aircrafts have reached their targets
 clock_cicle=0;
 while any(pos ~= target, 'all')
@@ -54,14 +59,7 @@ for i = 1:length(pos_hist)
     end  
     
     % Set axis limits
-    min_x = min([min(pos_hist(:, 1, :), [], 'all'), min(source(:, 1)), min(target(:, 1))]) - 1;
-    max_x = max([max(pos_hist(:, 1, :), [], 'all'), max(source(:, 1)), max(target(:, 1))]) + 1;
-    min_y = min([min(pos_hist(:, 2, :), [], 'all'), min(source(:, 2)), min(target(:, 2))]) - 1;
-    max_y = max([max(pos_hist(:, 2, :), [], 'all'), max(source(:, 2)), max(target(:, 2))]) + 1;
-    min_z = 0;
-    max_z = max(pos_hist(:, 3, :), [], 'all') + 3;
-    
-    axis([min_x, max_x, min_y, max_y, min_z, max_z])
+    axis([min_values(1)-1,max_values(1)+1,min_values(2)-1,max_values(2)+1,0,max_values(3)+3])
     title('3D Trajectories');
     xlabel('X-axis');
     ylabel('Y-axis');

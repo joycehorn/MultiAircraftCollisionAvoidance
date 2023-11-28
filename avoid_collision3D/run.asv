@@ -12,8 +12,13 @@ assert(all(target(:, 3) == 0), 'All targets have to be on the ground (z=0)');
 % Initialization
 pos = source;
 pos_hist = {pos};
+ % Combine both source and target points and calculate minimum and maximum values for x, y, and z coordinates
+all_points = [source; target];
+min_values = min(all_points);
+max_values = max(all_points);
 
 % Simulation loop: run until all aircrafts have reached their targets
+clock_cicle=0;
 while any(pos ~= target, 'all')
     for aircraft = 1:N % N = number of instantiated aircrafts
         if any(pos(aircraft, :) ~= target(aircraft, :)) %if current position is not the final destination
@@ -23,7 +28,8 @@ while any(pos ~= target, 'all')
     end
     clock_cicle=clock_cicle+1;
     if ~safety_monitor(pos)
-        disp('Not safe')
+        disp(['Not safe at clock = ' num2str(clock_cicle)])
+        disp(['Collision positions are are = [' num2str(pos(:).') ']']) ;
     end
     pos_hist = [pos_hist, pos];
 end
@@ -52,6 +58,7 @@ for i = 1:length(pos_hist)
     end  
     
     % Set axis limits
+    %{
     min_x = min([min(pos_hist(:, 1, :), [], 'all'), min(source(:, 1)), min(target(:, 1))]) - 1;
     max_x = max([max(pos_hist(:, 1, :), [], 'all'), max(source(:, 1)), max(target(:, 1))]) + 1;
     min_y = min([min(pos_hist(:, 2, :), [], 'all'), min(source(:, 2)), min(target(:, 2))]) - 1;
@@ -60,6 +67,8 @@ for i = 1:length(pos_hist)
     max_z = max(pos_hist(:, 3, :), [], 'all') + 3;
     
     axis([min_x, max_x, min_y, max_y, min_z, max_z])
+    %}
+    axis([min_values(1),min_values(2),min_values(3),max_values(1),max_values(2),min_values(3)])
     title('3D Trajectories');
     xlabel('X-axis');
     ylabel('Y-axis');
