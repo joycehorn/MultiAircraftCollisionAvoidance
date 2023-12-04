@@ -7,8 +7,8 @@ function [new_pos, dir] = aircraft_model(pos, target, avoid)
 
 %rng('shuffle') % Uncomment this line if you want to seed the random number generator
 
-if iscell(avoid)
-    increment = avoid{1}; % Use the specified increment to avoid
+if isnumeric(avoid)
+    increment = avoid; % Use the specified increment to avoid
 elseif pos(3) == 0
     % If z = 0 then aircraft in on the ground. Increment in the upward direction for take-off
     increment = [0, 0, 1]; 

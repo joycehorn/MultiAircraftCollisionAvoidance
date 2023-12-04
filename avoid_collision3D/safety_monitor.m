@@ -5,10 +5,12 @@ N=size(pos, 1);
 safety=1;
 for i=1:N
     for j=i+1:N
-        distance = sum(abs(pos(i,:) - pos(j,:)));
-        if distance<2
-            safety = 0;
-            break
+        if (pos(i,3)>0) && (pos(j,3)>0)
+            distance = sum(abs(pos(i,:) - pos(j,:)));
+            if distance<2 
+                safety = 0;
+                break
+            end
         end
     end
 end 
