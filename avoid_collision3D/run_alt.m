@@ -1,6 +1,13 @@
 function [] = run_alt(source, target)
 % This function simulates the movement of aircraft from source to target positions in 3D space.
 
+
+%delete targets=sources
+done_aircrafts = ~any(source-target, 2);
+source(done_aircrafts, :) = []; 
+target(done_aircrafts, :) = []; 
+
+
 % Input validations
 assert(size(source, 2) == 3, 'Dimension of sources has to be 3');
 assert(size(target, 2) == 3, 'Dimension of targets has to be 3');
@@ -9,13 +16,25 @@ assert(size(target, 1) == N, 'Number of targets has to be the same as the number
 assert(all(source(:, 3) == 0), 'All sources have to be on the ground (z=0)');
 assert(all(target(:, 3) == 0), 'All targets have to be on the ground (z=0)');
 
+
+
+
+
 % Initialization
 pos = source;
 pos_hist = {pos};
 dirs=zeros(N,3);
 
+%colors generation
+hue_values = linspace(0, 1, N)';
+saturation = 0.8 * ones(N, 1);
+value = 0.8 * ones(N, 1);
+colors_hsv = [hue_values, saturation, value];
 
-colors = rand(N, 3);
+% Convert HSV to RGB
+colors_rgb = hsv2rgb(colors_hsv);
+
+colors = colors_rgb; %rand(N, 3);
 clock_cycle=0;
 delay = 0.2;
 paused = false;
@@ -35,7 +54,7 @@ view(3);
 all_points = [source; target];
 min_values = min(all_points);
 max_values = max(all_points);
-axis([min_values(1)-1, max_values(1)+1, min_values(2)-1, max_values(2)+1, 0, max_values(3)+5])
+axis([min_values(1)-1, max_values(1)+1, min_values(2)-1, max_values(2)+1, 0, max_values(3)+10])
 
 % Plot the initial positions of the aircrafts
 scatter3(source(:, 1), source(:, 2), source(:, 3), 50, colors, 'filled','Marker', 'o');
@@ -48,12 +67,13 @@ while n>0
     avoid=controller(pos,dirs);
     aircraft=1;
     while aircraft <= n 
-        if any(pos(aircraft, :) ~= target(aircraft, :)) %if current position is not the final destination
+        if any(pos(aircraft, :) ~= target(aircraft, :)) %if current po
+            % sition is not the final destination
+            if isequal(avoid{aircraft},[0,0,0]) && (pos(aircraft,3)~=0)
+                disp('Didnt move. Why?')
+            end
             [new_pos, dir] = aircraft_model(pos(aircraft, :), target(aircraft, :), avoid{aircraft}); % call model for new position
             dirs(aircraft,:)=dir;
-            
-            
-            
             % Plot path between previous position and current position
             if clock_cycle == 0
                 plot3([source(aircraft, 1); new_pos(1)], [source(aircraft, 2); new_pos(2)], [source(aircraft, 3); new_pos(3)], '-', 'Color', colors(aircraft, :), 'LineWidth', 2);
@@ -94,4 +114,4 @@ end
 %run_alt([0, 0, 0; 1, 1, 0; 2, 2, 0], [5, 5, 0; 7, 7, 0; 10, 10, 0]);%safe
 %run_alt([0, 0, 0; 0, 1, 0; 1, 0, 0], [10, 10, 0; 5, 5, 0; 2, 2, 0]);%collide
 %run_alt([0, 0, 0; 0, 1, 0; 0, 2, 0; 0, 0, 0; 2, 2, 0; 4, 4, 0], [5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0]);
-
+%run_alt([-2, 2, 0;3, 3, 0;0, 0, 0; 0, 1, 0; 0, 2, 0; 0, 0, 0; 2, 2, 0; 4, 4, 0], [5, 5, 0;5, 5, 0;5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0])

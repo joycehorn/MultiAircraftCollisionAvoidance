@@ -9,13 +9,28 @@ assert(size(target, 1) == N, 'Number of targets has to be the same as the number
 assert(all(source(:, 3) == 0), 'All sources have to be on the ground (z=0)');
 assert(all(target(:, 3) == 0), 'All targets have to be on the ground (z=0)');
 
+%delete targets=sources
+done_aircrafts = ~any(source-target, 2);
+source(done_aircrafts, :) = []; % Delete zero rows
+source(done_aircrafts, :) = []; % Delete zero rows
+
+
+
 % Initialization
 pos = source;
 pos_hist = {pos};
 dirs=zeros(N,3);
 
+%colors generation
+hue_values = linspace(0, 1, N)';
+saturation = 0.8 * ones(N, 1);
+value = 0.8 * ones(N, 1);
+colors_hsv = [hue_values, saturation, value];
 
-colors = rand(N, 3);
+% Convert HSV to RGB
+colors_rgb = hsv2rgb(colors_hsv);
+
+colors = colors_rgb; %rand(N, 3);
 clock_cycle=0;
 delay = 0.2;
 paused = false;
@@ -35,7 +50,7 @@ view(3);
 all_points = [source; target];
 min_values = min(all_points);
 max_values = max(all_points);
-axis([min_values(1)-1, max_values(1)+1, min_values(2)-1, max_values(2)+1, 0, max_values(3)+5])
+axis([min_values(1)-1, max_values(1)+1, min_values(2)-1, max_values(2)+1, 0, max_values(3)+10])
 
 % Plot the initial positions of the aircrafts
 scatter3(source(:, 1), source(:, 2), source(:, 3), 50, colors, 'filled','Marker', 'o');
@@ -48,12 +63,13 @@ while n>0
     avoid=controller(pos,dirs);
     aircraft=1;
     while aircraft <= n 
-        if any(pos(aircraft, :) ~= target(aircraft, :)) %if current position is not the final destination
+        if any(pos(aircraft, :) ~= target(aircraft, :)) %if current po
+            % sition is not the final destination
+            if isequal(avoid{aircraft},[0,0,0]) && (pos(aircraft,3)~=0)
+                disp('bad')
+            end
             [new_pos, dir] = aircraft_model(pos(aircraft, :), target(aircraft, :), avoid{aircraft}); % call model for new position
             dirs(aircraft,:)=dir;
-            
-            
-            
             % Plot path between previous position and current position
             if clock_cycle == 0
                 plot3([source(aircraft, 1); new_pos(1)], [source(aircraft, 2); new_pos(2)], [source(aircraft, 3); new_pos(3)], '-', 'Color', colors(aircraft, :), 'LineWidth', 2);
