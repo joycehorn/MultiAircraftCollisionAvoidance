@@ -43,13 +43,17 @@ scatter3(source(:, 1), source(:, 2), source(:, 3), 50, colors, 'filled','Marker'
 scatter3(target(:, 1), target(:, 2), target(:, 3), 50, colors, 'x', 'LineWidth', 2);
 
 % Simulation loop: run until all aircrafts have reached their targets
-n=N;
+n=N;% n = number of aircrafts that has not arrived 
 while n>0
     avoid=controller(pos,dirs);
-    for aircraft = 1:n % n = number of not arrived air
+    aircraft=1;
+    while aircraft <= n 
         if any(pos(aircraft, :) ~= target(aircraft, :)) %if current position is not the final destination
             [new_pos, dir] = aircraft_model(pos(aircraft, :), target(aircraft, :), avoid{aircraft}); % call model for new position
             dirs(aircraft,:)=dir;
+            
+            
+            
             % Plot path between previous position and current position
             if clock_cycle == 0
                 plot3([source(aircraft, 1); new_pos(1)], [source(aircraft, 2); new_pos(2)], [source(aircraft, 3); new_pos(3)], '-', 'Color', colors(aircraft, :), 'LineWidth', 2);
@@ -57,10 +61,15 @@ while n>0
                 plot3([pos(aircraft, 1); new_pos(1)], [pos(aircraft, 2); new_pos(2)], [pos(aircraft, 3); new_pos(3)], '-', 'Color', colors(aircraft, :), 'LineWidth', 2);
             end
             pos(aircraft, :) = new_pos;
+            aircraft=aircraft+1;
         else
+            colors(aircraft,:)=[];
+            dirs(aircraft,:)=[];
             pos(aircraft, :) = [];
             target(aircraft, :)= [];
+            n=n-1;
         end
+        
     end
     
     drawnow;
@@ -78,11 +87,11 @@ while n>0
         delete(pause_text);
         paused = false;
     end
-
     pos_hist = [pos_hist, pos];
     pause(delay);
 end
 
-%run([0, 0, 0; 1, 1, 0; 2, 2, 0], [5, 5, 0; 7, 7, 0; 10, 10, 0]);%safe
-%run([0, 0, 0; 0, 1, 0; 1, 0, 0], [10, 10, 0; 5, 5, 0; 2, 2, 0]);%collide
+%run_alt([0, 0, 0; 1, 1, 0; 2, 2, 0], [5, 5, 0; 7, 7, 0; 10, 10, 0]);%safe
+%run_alt([0, 0, 0; 0, 1, 0; 1, 0, 0], [10, 10, 0; 5, 5, 0; 2, 2, 0]);%collide
+%run_alt([0, 0, 0; 0, 1, 0; 0, 2, 0; 0, 0, 0; 2, 2, 0; 4, 4, 0], [5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0]);
 

@@ -1,5 +1,5 @@
 function [safety] = safety_monitor(pos)
-%SAFATY_MONITOR Summary of this function goes here
+%SAFETY_MONITOR Summary of this function goes here
 %   Detailed explanation goes here
 N=size(pos, 1);
 safety=1;

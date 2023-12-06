@@ -51,6 +51,9 @@ while n>0
         if any(pos(aircraft, :) ~= target(aircraft, :)) %if current position is not the final destination
             [new_pos, dir] = aircraft_model(pos(aircraft, :), target(aircraft, :), avoid{aircraft}); % call model for new position
             dirs(aircraft,:)=dir;
+            
+            
+            
             % Plot path between previous position and current position
             if clock_cycle == 0
                 plot3([source(aircraft, 1); new_pos(1)], [source(aircraft, 2); new_pos(2)], [source(aircraft, 3); new_pos(3)], '-', 'Color', colors(aircraft, :), 'LineWidth', 2);
@@ -90,4 +93,5 @@ end
 
 %run_alt([0, 0, 0; 1, 1, 0; 2, 2, 0], [5, 5, 0; 7, 7, 0; 10, 10, 0]);%safe
 %run_alt([0, 0, 0; 0, 1, 0; 1, 0, 0], [10, 10, 0; 5, 5, 0; 2, 2, 0]);%collide
+%run_alt([0, 0, 0; 0, 1, 0; 0, 2, 0; 0, 0, 0; 2, 2, 0; 4, 4, 0], [5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0]);
 
