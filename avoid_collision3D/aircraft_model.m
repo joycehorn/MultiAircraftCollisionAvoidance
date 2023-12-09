@@ -16,9 +16,9 @@ else
     % Calculate the increment based on the sign of the difference between the target and current position
     increment = sign(target - pos);
     
-    % Adjust the increment to move only in one direction at a time
-    if sum(abs(increment)) > 1
-        increment(3) = increment(3) + 1;
+    % Avoid landing on other place different than the target
+    if pos(3)==1 && (increment(1)~=0 || increment(2)~=0)
+        increment(3) = 0;
     end
     
     % Randomly choose one non-zero element to set to zero, ensuring

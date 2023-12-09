@@ -1,4 +1,5 @@
 function [control]=controller(pos,dirs)
+
 N=size(pos, 1);
 box=min(pos,pos+dirs);
 control=cell(N,1);
@@ -27,14 +28,13 @@ for i=1:N
                 shuffled_indices = randperm(num_rows);
                 % Rearrange rows based on the shuffled indices
                 inc = inc(shuffled_indices, :);
+
+
                 next_pos=pos(j,:)+inc;
-                [coll_dist,index]=max(sum(abs(pos(i,:)-next_pos),2));
-                if coll_dist>=3
-                    control{j} = inc(index,:); % increment Z up
-                else
-
-
-                    
+                [~,index]=max(sum(abs(pos(i,:)-next_pos),2));
+                % if coll_dist>=3
+                control{j} = inc(index,:); % increment Z up
+                % else
                 %     inc=diag(dirs(i,:));
                 %     indices_zero_rows = ~any(inc, 2);
                 %     inc(indices_zero_rows, :)=[];

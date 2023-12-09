@@ -54,7 +54,7 @@ view(3);
 all_points = [source; target];
 min_values = min(all_points);
 max_values = max(all_points);
-axis([min_values(1)-1, max_values(1)+1, min_values(2)-1, max_values(2)+1, 0, max_values(3)+10])
+axis([min_values(1)-1, max_values(1)+1, min_values(2)-1, max_values(2)+1, 0, max_values(3)+int32(N/3)])
 
 % Plot the initial positions of the aircrafts
 scatter3(source(:, 1), source(:, 2), source(:, 3), 50, colors, 'filled','Marker', 'o');
@@ -83,6 +83,7 @@ while n>0
             pos(aircraft, :) = new_pos;
             aircraft=aircraft+1;
         else
+            avoid(aircraft)=[];
             colors(aircraft,:)=[];
             dirs(aircraft,:)=[];
             pos(aircraft, :) = [];
@@ -115,3 +116,8 @@ end
 %run_alt([0, 0, 0; 0, 1, 0; 1, 0, 0], [10, 10, 0; 5, 5, 0; 2, 2, 0]);%collide
 %run_alt([0, 0, 0; 0, 1, 0; 0, 2, 0; 0, 0, 0; 2, 2, 0; 4, 4, 0], [5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0]);
 %run_alt([-2, 2, 0;3, 3, 0;0, 0, 0; 0, 1, 0; 0, 2, 0; 0, 0, 0; 2, 2, 0; 4, 4, 0], [5, 5, 0;5, 5, 0;5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0])
+
+% random position
+% N=12
+% grid_size=15
+%run_alt([round(grid_size * rand(N, 2)), zeros(N, 1)], [round(grid_size * rand(N, 2)), zeros(N, 1)])

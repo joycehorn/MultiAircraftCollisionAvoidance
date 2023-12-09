@@ -58,7 +58,7 @@ view(3);
 all_points = [source; target];
 min_values = min(all_points);
 max_values = max(all_points);
-axis([min_values(1)-3, max_values(1)+5, min_values(2)-5, max_values(2)+5, 0, max_values(3)+5])
+axis([min_values(1)-3, max_values(1)+5, min_values(2)-5, max_values(2)+5, 0, max_values(3)+N])
 
 % Plot the initial positions of the aircrafts
 scatter3(source(:, 1), source(:, 2), source(:, 3), 50, colors, 'filled','Marker', 'o');
@@ -72,9 +72,9 @@ while n>0
     while aircraft <= n 
         plot3([old_pos(aircraft, 1); pos(aircraft,1)], [old_pos(aircraft, 2); pos(aircraft,2)], [old_pos(aircraft, 3); pos(aircraft,3)], '-', 'Color', colors(aircraft, :), 'LineWidth', 2);
         if any(pos(aircraft, :) ~= target(aircraft, :)) %if current po
-            % if isequal(old_pos(aircraft, :),pos(aircraft,:)) && (pos(aircraft,3)~=0)
-            %     disp('Didnt move being at hthe air')
-            % end
+            if isequal(old_pos(aircraft, :),pos(aircraft,:)) && (pos(aircraft,3)~=0)
+                disp('Didnt move being at hthe air')
+            end
             % sition is not the final destination
             [ahead_exp{aircraft},ortho_exp{aircraft}, back_exp{aircraft}] = aircraft_model(pos(aircraft, :), target(aircraft, :)); % call model for new position
             aircraft=aircraft+1;
