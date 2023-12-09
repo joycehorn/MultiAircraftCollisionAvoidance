@@ -3,7 +3,7 @@ function [new_pos, dir] = aircraft_model(pos, target, avoid)
 % Inputs:
 %   - pos: Current position of the aircraft
 %   - target: Target position for the aircraft
-%   - avoid: Boolean flag specifying avoidance behavior
+%   - avoid: Boolean specifying avoidance behavior (set by the controller)
 
 %rng('shuffle') % Uncomment this line if you want to seed the random number generator
 
@@ -29,7 +29,7 @@ else
     increment(randomIndex+1:end) = 0;
 end
 
-% Calculate the new position and direction
+% Calculate the new position and direction of future step
 new_pos = pos + increment;
 dir = sign(target - new_pos);
 
