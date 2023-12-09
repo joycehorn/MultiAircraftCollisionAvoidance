@@ -72,9 +72,11 @@ while n>0
     while aircraft <= n 
         plot3([old_pos(aircraft, 1); pos(aircraft,1)], [old_pos(aircraft, 2); pos(aircraft,2)], [old_pos(aircraft, 3); pos(aircraft,3)], '-', 'Color', colors(aircraft, :), 'LineWidth', 2);
         if any(pos(aircraft, :) ~= target(aircraft, :)) %if current po
+            % if isequal(old_pos(aircraft, :),pos(aircraft,:)) && (pos(aircraft,3)~=0)
+            %     disp('Didnt move being at hthe air')
+            % end
             % sition is not the final destination
             [ahead_exp{aircraft},ortho_exp{aircraft}, back_exp{aircraft}] = aircraft_model(pos(aircraft, :), target(aircraft, :)); % call model for new position
-            % Plot path between previous position and current position
             aircraft=aircraft+1;
         else
             colors(aircraft,:)=[];
@@ -90,7 +92,7 @@ while n>0
     end
     if n>0
         old_pos=pos;
-        inc=controller(old_pos,ahead_exp,ortho_exp, back_exp,10,safety_dist);
+        inc=controller(old_pos,ahead_exp,ortho_exp, back_exp,safety_dist);
         pos=pos+inc;       
     end
 
@@ -115,8 +117,14 @@ end
 pause;
 close all
 
-
+%Examples
 %run([0, 0, 0; 1, 1, 0; 2, 2, 0], [5, 5, 0; 7, 7, 0; 10, 10, 0]);%safe
 %run([0, 0, 0; 0, 1, 0; 1, 0, 0], [10, 10, 0; 5, 5, 0; 2, 2, 0]);%collide
 %run([0, 0, 0; 0, 1, 0; 0, 2, 0; 0, 0, 0; 2, 2, 0; 4, 4, 0], [5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0]);
 %run([-2, 2, 0;3, 3, 0;0, 0, 0; 0, 1, 0; 0, 2, 0; 0, 0, 0; 2, 2, 0; 4, 4, 0], [5, 5, 0;5, 5, 0;5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0])
+%run([-2, 2, 0;3, 3, 0;-2, 2, 0;3, 3, 0;-2, 2, 0;3, 3, 0;0, 0, 0; 0, 1, 0; 0, 2, 0; 0, 0, 0; 2, 2, 0; 4, 4, 0], [5, 5, 0;5, 5, 0;5, 5, 0; 5, 1, 0; 5, 5, 0; 4, 5, 0; 5, 3, 0; 5, 5, 0;5, 3, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0])
+
+% random position
+% N=12
+% grid_size=15
+%run([round(grid_size * rand(N, 2)), zeros(N, 1)], [round(grid_size * rand(N, 2)), zeros(N, 1)])

@@ -4,7 +4,7 @@ for i=1:N
     if isnumeric(ortho{i}) 
         options{i}=[options{i};ortho{i}];
     end
-    if isnumeric(ortho{i}) 
+    if isnumeric(back{i}) 
         options{i}=[options{i};back{i}];
     end
 end

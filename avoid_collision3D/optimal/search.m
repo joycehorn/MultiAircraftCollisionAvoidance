@@ -10,6 +10,7 @@ end
 d_max=0;
 N=numel(dim);
 inc_ind=1;
+close=[1,2];
 for i=1:prod(dim)
     d_min=inf; %fix this
     for j=1:N
