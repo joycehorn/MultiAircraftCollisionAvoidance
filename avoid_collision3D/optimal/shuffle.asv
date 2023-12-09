@@ -1,5 +1,0 @@
-function [inc_shuffled] = shuffle(inc_options)
-for i = 1:numel(inc_options)
-    shuffledMatrix = matrix(randperm(size(matrix, 1)), :)
-end
-
