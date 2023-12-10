@@ -1,13 +1,9 @@
-function [] = run(source, target)
+function [] = run_v1(source, target)
 % This function simulates the movement of aircraft from source to target positions in 3D space.
 
-safety_dist=2;
-
-%delete targets=sources
 done_aircrafts = ~any(source-target, 2);
 source(done_aircrafts, :) = []; 
 target(done_aircrafts, :) = []; 
-
 
 % Input validations
 assert(size(source, 2) == 3, 'Dimension of sources has to be 3');
@@ -17,19 +13,12 @@ assert(size(target, 1) == N, 'Number of targets has to be the same as the number
 assert(all(source(:, 3) == 0), 'All sources have to be on the ground (z=0)');
 assert(all(target(:, 3) == 0), 'All targets have to be on the ground (z=0)');
 
-
-
-
-
 % Initialization
 pos = source;
 pos_hist = {pos};
-ahead_exp=cell(N,1);
-ortho_exp=cell(N,1);
-back_exp=cell(N,1);
-old_pos=source;
+dirs=zeros(N,3);
 
-%colors generation
+%Color generation
 hue_values = linspace(0, 1, N)';
 saturation = 0.8 * ones(N, 1);
 value = 0.8 * ones(N, 1);
@@ -58,7 +47,7 @@ view(3);
 all_points = [source; target];
 min_values = min(all_points);
 max_values = max(all_points);
-axis([min_values(1)-3, max_values(1)+5, min_values(2)-5, max_values(2)+5, 0, max_values(3)+N])
+axis([min_values(1)-1, max_values(1)+1, min_values(2)-1, max_values(2)+1, 0, max_values(3)+int32(N/3)])
 
 % Plot the initial positions of the aircrafts
 scatter3(source(:, 1), source(:, 2), source(:, 3), 50, colors, 'filled','Marker', 'o');
@@ -66,41 +55,41 @@ scatter3(source(:, 1), source(:, 2), source(:, 3), 50, colors, 'filled','Marker'
 scatter3(target(:, 1), target(:, 2), target(:, 3), 50, colors, 'x', 'LineWidth', 2);
 
 % Simulation loop: run until all aircrafts have reached their targets
-n=N;% n = number of aircrafts that has not arrived 
+n=N;% n = number of aircraft that have not arrived 
 while n>0
+    avoid=controller_v1(pos,dirs);
     aircraft=1;
     while aircraft <= n 
-        plot3([old_pos(aircraft, 1); pos(aircraft,1)], [old_pos(aircraft, 2); pos(aircraft,2)], [old_pos(aircraft, 3); pos(aircraft,3)], '-', 'Color', colors(aircraft, :), 'LineWidth', 2);
-        if any(pos(aircraft, :) ~= target(aircraft, :)) %if current po
-            if isequal(old_pos(aircraft, :),pos(aircraft,:)) && (pos(aircraft,3)~=0)
-                disp('Didnt move being at hthe air')
+        if any(pos(aircraft, :) ~= target(aircraft, :))% If not the final destination
+            if isequal(avoid{aircraft},[0,0,0]) && (pos(aircraft,3)~=0)
+                disp('DEBUG: did not move.')
             end
-            % sition is not the final destination
-            [ahead_exp{aircraft},ortho_exp{aircraft}, back_exp{aircraft}] = aircraft_model(pos(aircraft, :), target(aircraft, :)); % call model for new position
+            [new_pos, dir] = aircraft_model_v1(pos(aircraft, :), target(aircraft, :), avoid{aircraft}); % call model for new position
+            dirs(aircraft,:)=dir;
+            % Plot path between previous position and current position
+            if clock_cycle == 0
+                plot3([source(aircraft, 1); new_pos(1)], [source(aircraft, 2); new_pos(2)], [source(aircraft, 3); new_pos(3)], '-', 'Color', colors(aircraft, :), 'LineWidth', 2);
+            else
+                plot3([pos(aircraft, 1); new_pos(1)], [pos(aircraft, 2); new_pos(2)], [pos(aircraft, 3); new_pos(3)], '-', 'Color', colors(aircraft, :), 'LineWidth', 2);
+            end
+            pos(aircraft, :) = new_pos;
             aircraft=aircraft+1;
         else
+            avoid(aircraft)=[];
             colors(aircraft,:)=[];
-            ahead_exp=ahead_exp([1:aircraft-1, aircraft+1:end]);
-            ortho_exp=ortho_exp([1:aircraft-1, aircraft+1:end]);
-            back_exp=back_exp([1:aircraft-1, aircraft+1:end]);
+            dirs(aircraft,:)=[];
             pos(aircraft, :) = [];
-            old_pos(aircraft, :) = [];
             target(aircraft, :)= [];
             n=n-1;
-            disp(n)
         end
+        
     end
-    if n>0
-        old_pos=pos;
-        inc=controller(old_pos,ahead_exp,ortho_exp, back_exp,safety_dist);
-        pos=pos+inc;       
-    end
-
+    
     drawnow;
-    %plot3([old_pos(aircraft, 1); pos(aircraft,1)], [old_pos(aircraft, 2); pos(aircraft,2)], [old_pos(aircraft, 3); pos(aircraft,3)], '-', 'Color', colors(aircraft, :), 'LineWidth', 2);
+    
     %Call Safety Monitor and pause plot if in unsafe state
     clock_cycle=clock_cycle+1;
-    if ~safety_monitor(pos) && ~paused
+    if ~safety_monitor_v1(pos) && ~paused
         disp(['Not safe at clock = ' num2str(clock_cycle) ', collision @ = [' num2str(pos(:).') ']']);
         pause_text = text(mean(xlim), mean(ylim), mean(zlim), 'Unsafe Condition!', 'FontSize', 20, 'HorizontalAlignment', 'center', 'Color', 'red');
         
@@ -114,17 +103,14 @@ while n>0
     pos_hist = [pos_hist, pos];
     pause(delay);
 end
-pause;
-close all
 
-%Examples
-%run([0, 0, 0; 1, 1, 0; 2, 2, 0], [5, 5, 0; 7, 7, 0; 10, 10, 0]);%safe
-%run([0, 0, 0; 0, 1, 0; 1, 0, 0], [10, 10, 0; 5, 5, 0; 2, 2, 0]);%collide
-%run([0, 0, 0; 0, 1, 0; 0, 2, 0; 0, 0, 0; 2, 2, 0; 4, 4, 0], [5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0]);
-%run([-2, 2, 0;3, 3, 0;0, 0, 0; 0, 1, 0; 0, 2, 0; 0, 0, 0; 2, 2, 0; 4, 4, 0], [5, 5, 0;5, 5, 0;5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0])
-%run([-2, 2, 0;3, 3, 0;-2, 2, 0;3, 3, 0;-2, 2, 0;3, 3, 0;0, 0, 0; 0, 1, 0; 0, 2, 0; 0, 0, 0; 2, 2, 0; 4, 4, 0], [5, 5, 0;5, 5, 0;5, 5, 0; 5, 1, 0; 5, 5, 0; 4, 5, 0; 5, 3, 0; 5, 5, 0;5, 3, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0])
+%Tests
+%run_v1([0, 0, 0; 1, 1, 0; 2, 2, 0], [5, 5, 0; 7, 7, 0; 10, 10, 0]);
+%run_v1([0, 0, 0; 0, 1, 0; 1, 0, 0], [10, 10, 0; 5, 5, 0; 2, 2, 0]);
+%run_v1([0, 0, 0; 0, 1, 0; 0, 2, 0; 0, 0, 0; 2, 2, 0; 4, 4, 0], [5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0]);
+%run_v1([-2, 2, 0;3, 3, 0;0, 0, 0; 0, 1, 0; 0, 2, 0; 0, 0, 0; 2, 2, 0; 4, 4, 0], [5, 5, 0;5, 5, 0;5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0; 5, 5, 0])
 
 % random position
 % N=12
 % grid_size=15
-%run([round(grid_size * rand(N, 2)), zeros(N, 1)], [round(grid_size * rand(N, 2)), zeros(N, 1)])
+%run_alt([round(grid_size * rand(N, 2)), zeros(N, 1)], [round(grid_size * rand(N, 2)), zeros(N, 1)])

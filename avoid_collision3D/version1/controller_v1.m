@@ -1,4 +1,4 @@
-function [control]=controller(pos,dirs)
+function [control]=controller_v1(pos,dirs)
 % Function responsible for safety maneuvers when multiple aircraft are
 % coming close to violating the safety requirement
     % Inputs:

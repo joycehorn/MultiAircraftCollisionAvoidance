@@ -1,4 +1,4 @@
-function [new_pos, dir] = aircraft_model(pos, target, avoid)
+function [new_pos, dir] = aircraft_model_v1(pos, target, avoid)
 % This function calculates the new position (new_pos) and direction (dir) for an aircraft.
 % Inputs:
 %   - pos: Current position of the aircraft
