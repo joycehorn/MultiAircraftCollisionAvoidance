@@ -25,5 +25,5 @@ Ensure you have MATLAB installed on your system.
 ### Installation
 Clone the repository:
 ```bash
-git clone [https://github.com/joycehorn/MultiAircraftCollisionAvoidance.git](https://github.com/joycehorn/MultiAircraftCollisionAvoidance.git)https://github.com/joycehorn/MultiAircraftCollisionAvoidance.git
+git clone https://github.com/joycehorn/MultiAircraftCollisionAvoidance.git
 
