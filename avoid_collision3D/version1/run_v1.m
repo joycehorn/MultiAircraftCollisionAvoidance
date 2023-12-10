@@ -47,7 +47,7 @@ view(3);
 all_points = [source; target];
 min_values = min(all_points);
 max_values = max(all_points);
-axis([min_values(1)-1, max_values(1)+1, min_values(2)-1, max_values(2)+1, 0, max_values(3)+int32(N/3)])
+axis([min_values(1)-1, max_values(1)+1, min_values(2)-1, max_values(2)+1, 0, max_values(3)+int32(N/3)+8])
 
 % Plot the initial positions of the aircrafts
 scatter3(source(:, 1), source(:, 2), source(:, 3), 50, colors, 'filled','Marker', 'o');
@@ -113,4 +113,4 @@ end
 % random position
 % N=12
 % grid_size=15
-%run_alt([round(grid_size * rand(N, 2)), zeros(N, 1)], [round(grid_size * rand(N, 2)), zeros(N, 1)])
+%run_v1([round(grid_size * rand(N, 2)), zeros(N, 1)], [round(grid_size * rand(N, 2)), zeros(N, 1)])
